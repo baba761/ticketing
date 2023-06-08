@@ -1,24 +1,24 @@
-name: deploy-auth
+name: deploy-paymets
 
 on:
     push:
         branches:
             - master
         paths:
-            - "auth/**"
+            - "paymets/**"
 jobs:
     build:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2
-            - run: cd auth && docker build -t rohitgoswamigi/auth .
+            - run: cd paymets && docker build -t rohitgoswamigi/paymets .
             - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
               env:
                   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
                   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-            - run: docker push rohitgoswamigi/auth
+            - run: docker push rohitgoswamigi/paymets
             - uses: digitalocean/action-doctl@v2
               with:
                   token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
             - run: doctl kubernetes cluster kubeconfig save ticketing
-            - run: kubectl rollout restart deployment auth-depl
+            - run: kubectl rollout restart deployment paymets-depl
